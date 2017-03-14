@@ -7,6 +7,11 @@ import {
   View,
   Button
 } from 'react-native';
+import { getApiKey } from './config/keys';
+
+
+
+
 
 export default class WeatherApp extends Component {
   state = {
@@ -32,20 +37,21 @@ export default class WeatherApp extends Component {
 
   fetchWeatherReportFunc(){
     let { initialPosition: { coords: { latitude, longitude } } } = this.state;
-    console.log('this.props', this.props);
-    const { baseURL, APPID } = this.props;
-    let url = `${baseURL}?lat=${latitude}&lon=${longitude}&appid=${APPID}`;
-    console.log('url', url);
-    return fetch(url, { method: 'GET'})
+    const { apiKey } = getApiKey();
+    const { baseURL } = this.props;
+    let url = `${baseURL}/${apiKey}/conditions/q/${latitude},${longitude}.json`;
+    return fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('responseJson', responseJson);
+        let { current_observation: { display_location: { city, state } }, temp_c, temp_f, weather } = responseJson;
+        this.setState({
+          city, state, temp_c, temp_f,
+        })
       })
       .catch((error) => {
         console.error(error);
       });
-
-
   }
 
   componentWillUnmount() {
@@ -90,8 +96,7 @@ WeatherApp.propTypes = {
 }
 
 WeatherApp.defaultProps = {
-  baseURL: "http://api.openweathermap.org/data/2.5/weather",
-  APPID: "008465225701ca5c4ea330cc0a11b5ab"
+  baseURL: "https://api.wunderground.com/api",
 }
 
 AppRegistry.registerComponent('WeatherApp', () => WeatherApp);
