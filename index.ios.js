@@ -18,6 +18,8 @@ export default class WeatherApp extends Component {
     temp_c: '28',
     temp_f: '55',
     weather: 'Partly Cloudy',
+    city: "Greenville",
+    state: "SC",
     viewPageBackgroundColor: {backgroundColor: 'hsl(348, 99%, 100%)'}
   };
 
@@ -68,10 +70,10 @@ export default class WeatherApp extends Component {
      console.log('backgroundColor', backgroundColor);
      this.setState({
        viewPageBackgroundColor: { backgroundColor }
-     })
-
+     });
    }
 
+   //REMOVE
    componentDidMount() {
      this.handleDisplayPageDetails()
    }
@@ -81,19 +83,18 @@ export default class WeatherApp extends Component {
   // 28 - 53,760
 
   render() {
-    let { viewPageBackgroundColor } = this.state;
-    console.log('viewPageBackgroundColor', viewPageBackgroundColor);
+    let { viewPageBackgroundColor, weather, city, state } = this.state;
     return (
       <View style={[viewPageBackgroundColor, styles.container]}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
         <Button
           onPress={() => this.getLocationParams()}
           title="Get Location"
           color="#841584"
           accessibilityLabel="Location button"
         />
+        <Text>
+
+        </Text>
       </View>
     );
   }
@@ -105,11 +106,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 20,
   }
 });
 
