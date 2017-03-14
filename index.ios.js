@@ -5,7 +5,9 @@ import {
   StyleSheet,
   Text,
   View,
-  Button
+  Button,
+  Image,
+  TextInput
 } from 'react-native';
 import { getApiKey } from './config/keys';
 import { tempToColor } from './config/weatherColors';
@@ -18,8 +20,8 @@ export default class WeatherApp extends Component {
     temp_c: '28',
     temp_f: '55',
     weather: 'Partly Cloudy',
-    city: "Greenville",
-    state: "SC",
+    full: 'Greenville, SC',
+    icon_url: "http://icons.wxug.com/i/c/k/partlycloudy.gif",
     viewPageBackgroundColor: {backgroundColor: 'hsl(348, 99%, 100%)'}
   };
 
@@ -55,9 +57,10 @@ export default class WeatherApp extends Component {
     return fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
-        const { current_observation: { display_location: { city, state }, temp_c, temp_f, weather } } = responseJson;
+        console.log('responseJson', responseJson);
+        const { current_observation: { display_location: { full }, temp_c, temp_f, weather, icon_url } } = responseJson;
         this.setState({
-          city, state, temp_c, temp_f, weather
+          full, temp_c, temp_f, weather
         }, this.handleDisplayPageDetails);
       })
       .catch((error) => {
@@ -67,7 +70,6 @@ export default class WeatherApp extends Component {
    handleDisplayPageDetails() {
      let { temp_c } = this.state;
      let backgroundColor = tempToColor(temp_c);
-     console.log('backgroundColor', backgroundColor);
      this.setState({
        viewPageBackgroundColor: { backgroundColor }
      });
@@ -78,23 +80,35 @@ export default class WeatherApp extends Component {
      this.handleDisplayPageDetails()
    }
 
-  //
-  // 31 - 44,640 - 58,416
-  // 28 - 53,760
-
   render() {
-    let { viewPageBackgroundColor, weather, city, state } = this.state;
+    let { viewPageBackgroundColor, weather, full, icon_url, temp_c } = this.state;
+    let temp = `${temp_c}ºC`;
     return (
       <View style={[viewPageBackgroundColor, styles.container]}>
+        <TextInput
+          style={{height: 40}}
+          placeholder="Type here to translate!"
+          onChangeText={(text) => this.setState({text})}
+        />
+        <Image source={{uri: icon_url}} />
+        <Text>
+          {full}
+        </Text>
+        <Text>
+          {weather}
+        </Text>
+        <Text>
+          {temp}
+        </Text>
+
         <Button
           onPress={() => this.getLocationParams()}
           title="Get Location"
           color="#841584"
           accessibilityLabel="Location button"
         />
-        <Text>
 
-        </Text>
+
       </View>
     );
   }
