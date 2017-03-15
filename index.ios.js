@@ -20,8 +20,8 @@ export default class WeatherApp extends Component {
     temp_c: '28',
     temp_f: '55',
     weather: 'Partly Cloudy',
-    full: 'Greenville, SC',
-    icon_url: "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+    location: 'Greenville, SC',
+    icon_url: "https://icons.wxug.com/i/c/k/partlycloudy.gif",
     viewPageBackgroundColor: {backgroundColor: 'hsl(348, 99%, 100%)'}
   };
 
@@ -60,7 +60,7 @@ export default class WeatherApp extends Component {
         console.log('responseJson', responseJson);
         const { current_observation: { display_location: { full }, temp_c, temp_f, weather, icon_url } } = responseJson;
         this.setState({
-          full, temp_c, temp_f, weather
+          location: full, temp_c, temp_f, weather
         }, this.handleDisplayPageDetails);
       })
       .catch((error) => {
@@ -75,24 +75,39 @@ export default class WeatherApp extends Component {
      });
    }
 
+   queryPartialLookup(query) {
+     let { text } = query;
+     let url = `https://autocomplete.wunderground.com/aq?query=${text}`;
+     console.log('url', url);
+     return fetch(url)
+       .then((response) => response.json())
+       .then((responseJson) => {
+         console.log('responseJson', responseJson);
+       })
+       .catch((error) => {
+         console.error(error);
+       });
+   }
+
    //REMOVE
    componentDidMount() {
      this.handleDisplayPageDetails()
    }
 
   render() {
-    let { viewPageBackgroundColor, weather, full, icon_url, temp_c } = this.state;
+    let { viewPageBackgroundColor, weather, location, icon_url, temp_c } = this.state;
+    const { container, iconStyle } = styles;
     let temp = `${temp_c}ºC`;
     return (
-      <View style={[viewPageBackgroundColor, styles.container]}>
-        <TextInput
-          style={{height: 40}}
-          placeholder="Type here to translate!"
-          onChangeText={(text) => this.setState({text})}
-        />
-        <Image source={{uri: icon_url}} />
+      <View style={[viewPageBackgroundColor, container]}>
+
         <Text>
-          {full}
+          <Image
+            style={iconStyle}
+            source={{uri: icon_url}} />
+        </Text>
+        <Text>
+          {location}
         </Text>
         <Text>
           {weather}
@@ -108,6 +123,11 @@ export default class WeatherApp extends Component {
           accessibilityLabel="Location button"
         />
 
+        <TextInput
+          style={{height: 40}}
+          placeholder="Type here to translate!"
+          onChangeText={(text) => this.queryPartialLookup({text})}
+        />
 
       </View>
     );
@@ -119,7 +139,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column',
+  },
+  iconStyle: {
+    width: 100,
+    height: 100
   }
 });
 

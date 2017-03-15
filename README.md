@@ -7,9 +7,11 @@ Installation
 4. npm install
 
 
-To run project locally:
+<!-- To run project locally: -->
+
 5. react-native run-ios (ios development)
 
-To build project
+<!-- To build project -->
+
 5. open iOS/WeatherAppNative.xcodeproj
 6. command+r to build the project
